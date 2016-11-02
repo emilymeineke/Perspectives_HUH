@@ -13,7 +13,6 @@ names(RA_dframe_resh)
 
 #Exploratory plots
 #cells with each type of damage
-
 bplot <- ggplot(RA_dframe_resh, aes(x=variable, y=value, colour=variable)) 
 bplot <- bplot + geom_boxplot() + geom_point() + theme(axis.text.x = element_text(angle=60, hjust=1)) +
   ylab("cells with damage") + geom_jitter() + theme(legend.position="none")
@@ -38,6 +37,11 @@ bplot2 <- ggplot(RA_dframe, aes(x=plant_genus_species, y=ch_leafremoved, colour=
 bplot2 <- bplot2 + geom_boxplot() + geom_jitter() + theme(axis.text.x = element_text(angle=60, hjust=1)) + ylab("cells with chewing damage")
 bplot2
 
+#cells with chewing damage over time
+bplot3 <- ggplot(RA_dframe, aes(x=year, y=ch_leafremoved)) 
+bplot3 <- bplot3 + geom_point() + ylab("cells with chewing damage") + geom_jitter()
+bplot3
+
 #cells with chewing damage by taxon
 bplot3 <- ggplot(RA_dframe, aes(x=taxon, y=ch_leafremoved, colour=taxon)) 
 bplot3 <- bplot3 + geom_boxplot() + ylab("cells with chewing damage")
@@ -49,8 +53,8 @@ bplot3 <- ggplot(RA_dframe, aes(x=state, y=ch_leafremoved, colour=state))
 bplot3 <- bplot3 + geom_boxplot() + ylab("cells with chewing damage")
 bplot3
 
-#change in chewing damage over time and by species
-facet1 <- ggplot(RA_dframe, aes(x=year, y=ch_leafremoved, colour=plant_genus_species)) + geom_point()
+#change in chewing damage over time and by taxon
+facet1 <- ggplot(RA_dframe, aes(x=year, y=ch_leafremoved, colour=taxon)) + geom_point()
 facet1 <- facet1 + facet_grid(state ~ ., margins=TRUE)
 facet1
 
@@ -69,7 +73,7 @@ facet_r
 detach(RA_dframe)
 
 
-#Convert all data to binary, plots and do analyses
+#Convert all data to binary, plots and do analyses, or do multivariate analyses (yes, no for each box)
 
 
 
