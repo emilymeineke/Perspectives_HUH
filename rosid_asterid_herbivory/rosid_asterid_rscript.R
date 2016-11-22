@@ -1,6 +1,8 @@
 library(ggplot2)
 library(reshape2)
 library(plyr)
+library(AICcmodavg)
+library(vegan)
 
 RA_dframe <- read.csv("rosid_asterid_data.csv")
 names(RA_dframe)
@@ -135,6 +137,7 @@ hist_cut
 
 #Figure 3: Progression of herbivory annually
 
+#Abundance of herbivory
 #Continuous, garbage
 Fig3_cont <- ggplot(topfive_RA_dframe_resh, aes(x=doy, y=value, colour=plant_genus_species)) 
 Fig3_cont <- Fig3_cont +  geom_point() +ylim(0,5) +theme_bw() +xlab("day of year") + ylab("cells with herbivore damage") 
@@ -165,7 +168,7 @@ VIBL <- subset(RA_dframe, plant_genus_species == "viola_blanda")
 VICU <- subset(RA_dframe, plant_genus_species == "viola_cucullata")
 VILA <- subset(RA_dframe, plant_genus_species == "vitis_labrusca")
   
-#Plots of chewing by doy by speciesc
+#Plots of chewing abundance by doy by species
 plo <- ggplot(BATI, aes(x=doy, y=ch_leafremoved, colour=plant_genus_species)) + geom_point() + geom_abline()
 plo
 
@@ -227,6 +230,13 @@ plo <- ggplot(VILA, aes(x=doy, y=ch_leafremoved, colour=plant_genus_species)) + 
 plo
 
 
+#Identify species with most chewing damage
+mean_damage_abund <- ddply(RA_dframe, ~plant_genus_species, summarize, mean_chewing = mean(ch_leafremoved, na.rm=T))
+#Sort and choose top 5, see if this is a good method for displaying data
+#Do this for other types of damage, too?
+attach(mean_damage_abund)
+mean_damage_abund_top <- mean_damage_abund[order(mean_chewing),]
+
 
 #Cat
 #Format data
@@ -238,6 +248,8 @@ RA_dframe$binary_stipp <- ifelse(RA_dframe$stippling>0, 1, 0)
 RA_dframe$binary_lmines <- ifelse(RA_dframe$leafmines_tot>0, 1, 0)
 RA_dframe$binary_SM <- ifelse(RA_dframe$sooty.mould>0, 1, 0)
 RA_dframe$binary_lgalls <- ifelse(RA_dframe$leaf.galls>0, 1, 0)
+RA_dframe$binary_blotchmines <- ifelse(RA_dframe$blotch.mine>0, 1, 0)
+RA_dframe$binary_serpmines <- ifelse(RA_dframe$serpentine.mine>0, 1, 0)
 
 RA_dframe_resh2 <- melt(RA_dframe, id.vars=c("plant_genus_species", "taxon", "MF", "abscission_num",
                                             "herbarium", "date", "month", "month_cat", "day", "year", "doy", 
@@ -268,15 +280,147 @@ RA_dframe_fig2_noNA <- subset(RA_dframe_fig2_noNA, month_cat != "March" & month_
 
 
 cat <- ggplot(RA_dframe_fig2_noNA, aes(x=reorder(month_cat,doy), y=prop)) + xlab("") + ylab("Proportion of specimens")
-cat <- cat + geom_bar(aes(fill = variable), position = "fill", stat="identity")
+cat <- cat + geom_bar(aes(fill = variable), position = "fill", stat="identity") + scale_fill_manual(values=cbPalette, 
+                                                                                                    name="Damage Type",
+                                                                                                    breaks=c("binary_chew", "binary_skel", "binary_stipp", "binary_lgalls", "binary_lmines", "binary_noherbiv"),
+                                                                                                    labels=c("Chewing (leaf area removed)", "Skeletonization", "Stippling", "Leaf Galls", "Leaf mines", "No herbivory"))
 cat
 
+#x=reorder(plant_genus_species,ch_leafremoved, mean)
 
-#Maybe make the plot above for species with the highest incidence of herbivory? 
+#Overall test for effect of year, doy
+RA_dframe_noNAchew <- subset(RA_dframe, ch_leafremoved != "NA")
+RA_dframe_noNAchew$totalboxes <- 5
+RA_dframe_noNAchew$chew_prop <- RA_dframe_noNAchew$ch_leafremoved/RA_dframe_noNAchew$totalboxes
 
-
-x=reorder(plant_genus_species,ch_leafremoved, mean)
-
-#Test for effect of year, doy
-model <- lme(ch_leafremoved~doy, random = ~1|plant_genus_species, na.action=na.omit, data=RA_dframe)
+model <- glmer(chew_prop~log(doy+1)+(1|plant_genus_species), weights=totalboxes, family = binomial(logit), 
+               na.action=na.omit, data=RA_dframe_noNAchew, control = glmerControl(optimizer = "bobyqa"),
+               nAGQ = 10)
 summary(model)
+
+binary_chew <- list()
+binary_chew[[1]] <- glm(chew_prop~doy*plant_genus_species+year, weights=totalboxes, family = binomial(logit), 
+                        na.action=na.omit, data=RA_dframe_noNAchew)
+binary_chew[[2]] <- glm(chew_prop~doy*plant_genus_species, weights=totalboxes, family = binomial(logit), 
+               na.action=na.omit, data=RA_dframe_noNAchew)
+binary_chew[[3]] <- glm(chew_prop~doy, weights=totalboxes, family = binomial(logit), 
+              na.action=na.omit, data=RA_dframe_noNAchew)
+binary_chew[[4]] <- glm(chew_prop~plant_genus_species, weights=totalboxes, family = binomial(logit), 
+                        na.action=na.omit, data=RA_dframe_noNAchew)
+binary_chew[[5]] <- glm(chew_prop~1, weights=totalboxes, family = binomial(logit), 
+                        na.action=na.omit, data=RA_dframe_noNAchew)
+
+Modnames <- c("year_doy_species", "species_doy", "doy", "species", "null")
+
+(aict <- aictab(cand.set = binary_chew, modnames=Modnames, sort=TRUE))
+anova(binary_chew[[2]], binary_chew[[5]], test="LRT")
+
+summary(binary_chew[[2]])
+
+
+#Figure 4: NMDS
+#Construct matrix 
+RA_dframe_sub <- RA_dframe
+RA_dframe_sub$Total <- ch_leafremoved+skel+stippling+blotch.mine+serpentine.mine+leafminer.oviholes+leaf.galls+leaf.roller
+RA_dframe_sub <- subset(RA_dframe_sub, Total != "NA" & Total != 0)
+
+#Get rid of outlier with 4 leaf galls
+RA_dframe_sub <- subset(RA_dframe_sub, leaf.galls<4)
+
+mat <- RA_dframe_sub[,15:25]
+matID <- 1:nrow(mat)
+mat <- cbind(mat, matID)
+RA_dframe_sub <- cbind(matID, RA_dframe_sub)
+
+mat <- mat[c("ch_leafremoved", "skel",    "stippling", "blotch.mine", "serpentine.mine", 
+               "leafminer.oviholes", "leaf.galls")]
+mat <- as.matrix(mat)
+
+
+#Make map
+map <- RA_dframe_sub[c("matID", "plant_genus_species", "taxon", "MF", "abscission_num", "herbarium",
+                   "date", "month", "month_cat", "day", "year", "doy", "state", "phenology", "county" )]
+
+
+#nmds
+otu.bray <- vegdist(mat,method="bray")
+
+braycurtis.mds <- metaMDS(otu.bray, k=2)
+with(map, levels(plant_genus_species))
+stressplot(braycurtis.mds)
+colvec <- c("black","lawngreen","navy","grey", "yellow", "darkblue","green","purple","orange",
+            "red1", "darkgreen","skyblue", "darkturquoise", "brown","darkslategrey", "springgreen1","cadetblue4", 
+            "chocolate4", "palegoldenrod", "violetred2")
+#jpeg(file="/Users/emilymeineke/Desktop/Collaborations/Ant nest microbes/Bact results/Taxa_NMDS_bact.jpg")
+
+plot(braycurtis.mds)
+with(map, points(braycurtis.mds, display="sites", col=colvec[plant_genus_species], pch=21, bg=colvec[plant_genus_species]))
+with(map, legend("topright",legend=levels(plant_genus_species),bty="n", col=colvec, pch=21, pt.bg=colvec))
+#dev.off()
+
+#Hypothesis testing
+fotu.bray <- vegdist(mat,method="bray")
+fad<-adonis(fotu.bray~plant_genus_species, data=map, permutations=999)
+fad
+fmod<-with(map,betadisper(fotu.bray,plant_genus_species))
+anova(fmod)
+TukeyHSD(fmod)
+
+joined <- cbind(map, mat, scores(braycurtis.mds))
+
+
+#Calculate total damage types per specimen
+RA_dframe$total_damtypes <- RA_dframe$binary_chew + RA_dframe$binary_skel + binary_stipp + binary_lmines + binary_SM + binary_lgalls + binary_blotchmines + binary_serpmines 
+RA_dframe$damdiv_prop <- RA_dframe$total_damtypes/8
+RA_dframe$Total_types <- 8
+mean_damage <- ddply(RA_dframe, ~plant_genus_species, summarize, mean_damtypes = mean(total_damtypes, na.rm=T))
+mean_damage_abv1 <- subset(mean_damage, mean_damtypes >1)
+
+#RA_dframe_sub1 <- subset(RA_dframe, plant_genus_species == "epigaea_repens"|plant_genus_species=="lespedeza_hirta"|plant_genus_species=="lespedeza_capitata")
+#ggplot(RA_dframe_sub1, aes(y=damdiv_prop, x=doy, colour=plant_genus_species)) + geom_point()
+
+#Logistic regression with plant_genus_species as a fixed effect
+binary_damdiv <- list()
+binary_damdiv[[1]] <- glm(damdiv_prop~doy*plant_genus_species+year, weights=Total_types, family = binomial(logit), 
+                          na.action=na.omit, data=RA_dframe)
+binary_damdiv[[2]] <- glm(damdiv_prop~doy*plant_genus_species, weights=Total_types, family = binomial(logit), 
+                        na.action=na.omit, data=RA_dframe)
+binary_damdiv[[3]] <- glm(damdiv_prop~doy, weights=Total_types, family = binomial(logit), 
+                        na.action=na.omit, data=RA_dframe)
+binary_damdiv[[4]] <- glm(damdiv_prop~plant_genus_species, weights=Total_types, family = binomial(logit), 
+                        na.action=na.omit, data=RA_dframe)
+binary_damdiv[[5]] <- glm(damdiv_prop~1, weights=Total_types, family = binomial(logit), 
+                        na.action=na.omit, data=RA_dframe)
+
+Modnames <- c("year_doy_species", "species_doy", "doy", "species", "null")
+
+(aict <- aictab(cand.set = binary_damdiv, modnames=Modnames, sort=TRUE))
+anova(binary_damdiv[[2]], binary_damdiv[[4]], test="LRT")
+
+summary(binary_damdiv[[2]])
+
+#Linear models don't meet assumptions
+plot(RA_dframe$year, RA_dframe$total_damtypes)
+damtypes <- lm(total_damtypes~year*plant_genus_species+doy, na.action=na.omit, data=RA_dframe)
+summary(damtypes)
+plot(damtypes)
+
+linear <- lme(total_damtypes~doy+year, data=RA_dframe, random=~1|plant_genus_species, na.action=na.omit)
+summary(linear)
+plot(linear)
+
+#Final full model
+plot(RA_dframe$plant_genus_species, log(RA_dframe$doy+1))
+plot(RA_dframe$doy, RA_dframe$damdiv_prop)
+
+model <- glmer(damdiv_prop~log(doy+1)+(1|plant_genus_species), weights=Total_types, family = binomial(logit), 
+               na.action=na.omit, data=RA_dframe, control = glmerControl(optimizer = "bobyqa"),
+               nAGQ = 10)
+summary(model)
+anova(model)
+
+#Models for indiv. species
+
+#What species have the most diverse damage? Can we just plot the progression of those throughout the year? 
+#Make sure not to forget separate models per species. 
+
