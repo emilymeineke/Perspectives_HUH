@@ -125,14 +125,14 @@ Fig2 <- Fig2 +  geom_freqpoly(binwidth = 1, size=1.3) +xlim(0,5) +theme_bw() +xl
 Fig2
 
 #Histogram
-cbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+topfive_RA_dframe_resh <- subset(topfive_RA_dframe_resh, variable != "sooty.mould")
+cbPalette <- c("ch_leafremoved"="#E69F00", "skel"="#56B4E9", "stippling"= "#0072B2", "leaf.galls" = "#F0E442", "leafmines_tot" = "#000000")
 hist_cut <- ggplot(topfive_RA_dframe_resh, aes(x=value, fill=variable)) +xlab("Grid cells with herbivory") + ylab("Specimens")
 hist_cut <- hist_cut + geom_bar(position="dodge") + theme_bw() + scale_fill_manual(values=cbPalette, 
                                                                         name="Damage Type",
-                                                                        breaks=c("ch_leafremoved", "skel", "stippling", "leaf.galls", "sooty.mould", "leafmines_tot"),
-                                                                        labels=c("Chewing (leaf area removed)", "Skeletonization", "Stippling", "Leaf Galls", "Sooty Mould", "Leaf mines"))
+                                                                        breaks=c("ch_leafremoved", "skel", "stippling", "leaf.galls", "leafmines_tot"),
+                                                                        labels=c("chewing (leaf area removed)", "skeletonization", "stippling", "leaf galls", "leaf mines"))
 hist_cut
-
 
 
 #Figure 3: Progression of herbivory annually
@@ -276,14 +276,14 @@ RA_dframe_resh2_fig2$value <- as.numeric(RA_dframe_resh2_fig2$value)
 x <- nrow(RA_dframe_resh2_fig2)
 RA_dframe_fig2_noNA <- subset(RA_dframe_resh2_fig2, value != "NA")
 RA_dframe_fig2_noNA$prop <- RA_dframe_fig2_noNA$value/4908
-RA_dframe_fig2_noNA <- subset(RA_dframe_fig2_noNA, month_cat != "March" & month_cat != "December")
+RA_dframe_fig2_noNA <- subset(RA_dframe_fig2_noNA, month_cat != "March" & month_cat != "December" & variable != "binary_SM")
 
-
-cat <- ggplot(RA_dframe_fig2_noNA, aes(x=reorder(month_cat,doy), y=prop)) + xlab("") + ylab("Proportion of specimens")
+cbPalette <- c("binary_noherbiv"= "#009E73", "binary_chew"="#E69F00", "binary_skel"="#56B4E9", "binary_stipp"= "#0072B2", "binary_lgalls" = "#F0E442", "binary_lmines" = "#000000")
+cat <- ggplot(RA_dframe_fig2_noNA, aes(x=reorder(month_cat,doy), y=prop)) + theme_bw() + xlab("") + ylab("Proportion of specimens")
 cat <- cat + geom_bar(aes(fill = variable), position = "fill", stat="identity") + scale_fill_manual(values=cbPalette, 
                                                                                                     name="Damage Type",
                                                                                                     breaks=c("binary_chew", "binary_skel", "binary_stipp", "binary_lgalls", "binary_lmines", "binary_noherbiv"),
-                                                                                                    labels=c("Chewing (leaf area removed)", "Skeletonization", "Stippling", "Leaf Galls", "Leaf mines", "No herbivory"))
+                                                                                                    labels=c("chewing (leaf area removed)", "skeletonization", "stippling", "leaf galls", "leaf mines", "no herbivory"))
 cat
 
 #x=reorder(plant_genus_species,ch_leafremoved, mean)
@@ -317,10 +317,119 @@ anova(binary_chew[[2]], binary_chew[[5]], test="LRT")
 
 summary(binary_chew[[2]])
 
+#Separate GLM models for each spp? to see how many are significant? 
+
+
 
 #Figure 4: NMDS
+#Just Viola and Lespedeza for paper figure
 #Construct matrix 
 RA_dframe_sub <- RA_dframe
+attach(RA_dframe_sub)
+RA_dframe_sub$Total <- ch_leafremoved+skel+stippling+blotch.mine+serpentine.mine+leafminer.oviholes+leaf.galls+leaf.roller
+RA_dframe_sub <- subset(RA_dframe_sub, Total != "NA" & Total != 0)
+RA_dframe_sub_justfour <- subset(RA_dframe_sub, plant_genus_species == "viola_blanda"|plant_genus_species == "viola_cucullata"|
+                                   plant_genus_species == "lespedeza_hirta"|plant_genus_species == "lespedeza_capitata")
+RA_dframe_sub_justfour$plant_genus_species <- factor(RA_dframe_sub_justfour$plant_genus_species)
+
+#Get rid of outlier with 4 leaf galls
+RA_dframe_sub_justfour <- subset(RA_dframe_sub_justfour, leaf.galls<4)
+
+mat <- RA_dframe_sub_justfour[,15:25]
+matID <- 1:nrow(mat)
+mat <- cbind(mat, matID)
+RA_dframe_sub_justfour <- cbind(matID, RA_dframe_sub_justfour)
+
+mat <- mat[c("ch_leafremoved", "skel",    "stippling", "blotch.mine", "serpentine.mine", 
+               "leafminer.oviholes", "leaf.galls")]
+mat <- as.matrix(mat)
+
+
+#Make map
+map <- RA_dframe_sub_justfour[c("matID", "plant_genus_species", "taxon", "MF", "abscission_num", "herbarium",
+                   "date", "month", "month_cat", "day", "year", "doy", "state", "phenology", "county" )]
+
+
+#nmds
+otu.bray <- vegdist(mat,method="bray")
+braycurtis.mds <- metaMDS(otu.bray, k=2)
+
+#base plot
+with(map, levels(plant_genus_species))
+stressplot(braycurtis.mds)
+colvec <- c("black","darkgrey","red","orange")
+plot(braycurtis.mds)
+with(map, points(braycurtis.mds, display="sites", col=colvec[plant_genus_species], pch=21, bg=colvec[plant_genus_species]))
+with(map, legend("topright",legend=levels(plant_genus_species),bty="n", col=colvec, pch=21, pt.bg=colvec))
+
+#plot with hulls
+braycurtis.mds_ord <- braycurtis.mds$points
+braycurtis.mds_ord <- braycurtis.mds_ord[1:101,]
+joined_ord_map <- merge(braycurtis.mds_ord, map, by= "row.names")
+head(joined_ord_map)
+rownames(joined_ord_map) <- joined_ord_map[,1]
+joined_ord_map <- joined_ord_map[,-1]
+names(joined_ord_map)
+
+#Create data for convex hulls
+data.scores <- as.data.frame(scores(braycurtis.mds_ord))
+data.scores$site <- rownames(data.scores)
+data.scores$grp <- joined_ord_map$plant_genus_species
+grp.vc <- data.scores[data.scores$grp == "viola_cucullata", ][chull(data.scores[data.scores$grp == 
+                                                                     "viola_cucullata", c("MDS1", "MDS2")]), ]  # hull values for grp A
+grp.vb <- data.scores[data.scores$grp == "viola_blanda", ][chull(data.scores[data.scores$grp == 
+                                                                      "viola_blanda", c("MDS1", "MDS2")]), ]  # hull values for grp B
+grp.lh <- data.scores[data.scores$grp == "lespedeza_hirta", ][chull(data.scores[data.scores$grp == 
+                                                                                  "lespedeza_hirta", c("MDS1", "MDS2")]), ]  # hull values for grp A
+grp.lc <- data.scores[data.scores$grp == "lespedeza_capitata", ][chull(data.scores[data.scores$grp == 
+                                                                                  "lespedeza_capitata", c("MDS1", "MDS2")]), ]  # hull values for grp A
+
+hull.data <- rbind(grp.vc, grp.vb, grp.lh, grp.lc)  #combine grp.a and grp.b
+hull.data
+
+#Species vectors
+vectors_species <- envfit(braycurtis.mds, map, perm=999, na.rm=TRUE)
+#spp.scrs <- as.data.frame(scores(vectors_species, display = "vectors"))
+#spp.scrs <- cbind(spp.scrs, Species = rownames(spp.scrs))
+
+A <- as.list(vectors_species$vectors)
+#creating the dataframe
+pvals <-as.data.frame(A$pvals)
+arrows <-as.data.frame(A$arrows*sqrt(A$r))
+C <-cbind(arrows, pvals)
+#subset
+Cred_sp<-subset(C, pvals<0.05)
+Cred_sp <- cbind(Cred_sp, Species = rownames(Cred_sp))
+colvec <- c("black","darkgrey","red","orange")
+
+ggplot() + 
+  #geom_polygon(data=hull.data,aes(x=MDS1,y=MDS2,fill=grp,group=grp),alpha=0.30, show.legend=FALSE) + # add the convex hulls
+  scale_fill_manual(values=c("lespedeza_capitata" = "black", "lespedeza_hirta" = "darkgrey", "viola_blanda" = "red", "viola_cucullata"="orange")) +
+  geom_point(data=data.scores,aes(x=MDS1,y=MDS2, colour=grp),size=3) + # add the point markers
+  scale_colour_manual(values=c("lespedeza_capitata" = "black", "lespedeza_hirta" = "darkgrey", "viola_blanda" = "red", "viola_cucullata"="orange"), name="") +
+  coord_equal() +
+  theme_bw() + 
+  theme(axis.text.x = element_blank(),  # remove x-axis text
+        axis.text.y = element_blank(), # remove y-axis text
+        axis.ticks = element_blank(),  # remove axis ticks
+        axis.title.x = element_text(size=12), # remove x-axis labels
+        axis.title.y = element_text(size=12), # remove y-axis labels
+        panel.background = element_blank(), 
+        panel.grid.major = element_blank(),  #remove major-grid labels
+        panel.grid.minor = element_blank(),  #remove minor-grid labels
+        plot.background = element_blank()) +
+  theme(legend.title = element_text(size=10)) +
+  theme(legend.text = element_text(size =10)) 
+#+
+#scale_shape_manual(values = c(17, 2), name="Spray treatment", breaks=c("n", "y"), labels=c("not sprayed", "sprayed"))
+#ggsave(file="/Users/emilymeineke/Desktop/Collaborations/Annas project/Annas data 10.13.2015/Analyses for ESA/Figures/Spiderbraycurtis.mds2013_withspecies.tiff", width=18, height=18, units="cm", dpi=300)
+
+
+
+#All species
+#Construct matrix 
+RA_dframe_sub <- RA_dframe
+attach(RA_dframe_sub)
 RA_dframe_sub$Total <- ch_leafremoved+skel+stippling+blotch.mine+serpentine.mine+leafminer.oviholes+leaf.galls+leaf.roller
 RA_dframe_sub <- subset(RA_dframe_sub, Total != "NA" & Total != 0)
 
@@ -333,30 +442,28 @@ mat <- cbind(mat, matID)
 RA_dframe_sub <- cbind(matID, RA_dframe_sub)
 
 mat <- mat[c("ch_leafremoved", "skel",    "stippling", "blotch.mine", "serpentine.mine", 
-               "leafminer.oviholes", "leaf.galls")]
+             "leafminer.oviholes", "leaf.galls")]
 mat <- as.matrix(mat)
 
 
 #Make map
 map <- RA_dframe_sub[c("matID", "plant_genus_species", "taxon", "MF", "abscission_num", "herbarium",
-                   "date", "month", "month_cat", "day", "year", "doy", "state", "phenology", "county" )]
+                                "date", "month", "month_cat", "day", "year", "doy", "state", "phenology", "county" )]
 
 
 #nmds
 otu.bray <- vegdist(mat,method="bray")
-
 braycurtis.mds <- metaMDS(otu.bray, k=2)
+
+#base plot
 with(map, levels(plant_genus_species))
 stressplot(braycurtis.mds)
 colvec <- c("black","lawngreen","navy","grey", "yellow", "darkblue","green","purple","orange",
-            "red1", "darkgreen","skyblue", "darkturquoise", "brown","darkslategrey", "springgreen1","cadetblue4", 
-            "chocolate4", "palegoldenrod", "violetred2")
-#jpeg(file="/Users/emilymeineke/Desktop/Collaborations/Ant nest microbes/Bact results/Taxa_NMDS_bact.jpg")
-
+           "red1", "darkgreen","skyblue", "darkturquoise", "brown","darkslategrey", "springgreen1","cadetblue4", 
+           "chocolate4", "palegoldenrod", "violetred2")
 plot(braycurtis.mds)
 with(map, points(braycurtis.mds, display="sites", col=colvec[plant_genus_species], pch=21, bg=colvec[plant_genus_species]))
 with(map, legend("topright",legend=levels(plant_genus_species),bty="n", col=colvec, pch=21, pt.bg=colvec))
-#dev.off()
 
 #Hypothesis testing
 fotu.bray <- vegdist(mat,method="bray")
@@ -366,7 +473,17 @@ fmod<-with(map,betadisper(fotu.bray,plant_genus_species))
 anova(fmod)
 TukeyHSD(fmod)
 
-joined <- cbind(map, mat, scores(braycurtis.mds))
+#Export data for phylogenetic tree
+braycurtis.mds_ord <- braycurtis.mds$points
+dim(braycurtis.mds_ord)
+braycurtis.mds_ord <- braycurtis.mds_ord[1:527,]
+joined_ord_map <- merge(braycurtis.mds_ord, map, by= "row.names")
+head(joined_ord_map)
+rownames(joined_ord_map) <- joined_ord_map[,1]
+joined_ord_map <- joined_ord_map[,-1]
+names(joined_ord_map)
+mean_ordscore <- ddply(joined_ord_map, ~plant_genus_species, summarize, mean_mds = mean(MDS1, na.rm=T))
+write.csv(mean_ordscore, file="meanordscore.csv")
 
 
 #Calculate total damage types per specimen
@@ -375,6 +492,7 @@ RA_dframe$damdiv_prop <- RA_dframe$total_damtypes/8
 RA_dframe$Total_types <- 8
 mean_damage <- ddply(RA_dframe, ~plant_genus_species, summarize, mean_damtypes = mean(total_damtypes, na.rm=T))
 mean_damage_abv1 <- subset(mean_damage, mean_damtypes >1)
+write.csv(mean_damage, file="meandamagetypesperspecies.csv")
 
 #RA_dframe_sub1 <- subset(RA_dframe, plant_genus_species == "epigaea_repens"|plant_genus_species=="lespedeza_hirta"|plant_genus_species=="lespedeza_capitata")
 #ggplot(RA_dframe_sub1, aes(y=damdiv_prop, x=doy, colour=plant_genus_species)) + geom_point()
@@ -420,7 +538,14 @@ summary(model)
 anova(model)
 
 #Models for indiv. species
-
 #What species have the most diverse damage? Can we just plot the progression of those throughout the year? 
-#Make sure not to forget separate models per species. 
+ 
+
+#Output for overlaying on phylogeny
+#Average damage diversity
+
+
+
+
+
 
