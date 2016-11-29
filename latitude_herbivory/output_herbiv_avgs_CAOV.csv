@@ -1,0 +1,37 @@
+"","county","decimalLatitude","decimalLongitude","state","plant_genus_species","mean_lrem","mean_skel","mean_stipp","mean_bmine","mean_smine","mean_SM"
+"1","Androscoggin",44.16572498,-70.20664907,"Maine","carya_ovata",1.5,0,1,0,0,0
+"2","Belknap",43.51819011,-71.42336011,"New Hampshire","carya_ovata",1,0.666666666666667,0,0,0,0
+"3","Bennington",43.03516549,-73.09382147,"Vermont","carya_ovata",2,0,0,1.5,0,0
+"4","Berkshire",42.3708893,-73.20736933,"Massachusetts","carya_ovata",1.75,0,0.5,0,0,0
+"5","Bristol",41.80146413,-71.11511193,"Massachusetts","carya_ovata",0,0,0,0,0,0
+"6","Cheshire",42.91987071,-72.25131549,"New Hampshire","carya_ovata",0.428571428571429,0.285714285714286,0.571428571428571,0,0.142857142857143,0
+"7","Chittenden",44.46078451,-73.08157094,"Vermont","carya_ovata",0.2,0,1,0,0,0
+"8","Cumberland",43.85089087,-70.42166764,"Maine","carya_ovata",0,0,0,0,0,0
+"9","Essex",42.67251757,-70.95675298,"Massachusetts","carya_ovata",2.25,0.5,0,0,0,0
+"10","Fairfield",41.2735673,-73.38971484,"Connecticut","carya_ovata",1,0,0.333333333333333,0,0,0
+"11","Franklin",42.58285555,-72.59088089,"Massachusetts","carya_ovata",2.2,0.2,0,0,0.2,0.6
+"12","Hampden",42.13519179,-72.63148328,"Massachusetts","carya_ovata",0,0,0,0,0,0
+"13","Hampshire",42.34002109,-72.66388792,"Massachusetts","carya_ovata",1,0,0,0,0,1.75
+"14","Hancock",44.71937721,-68.35093412,"Maine","carya_ovata",0,0,0,0,0,0
+"15","Hartford",41.80663095,-72.73281062,"Connecticut","carya_ovata",1.5,0,0,0,0,0
+"16","Hillsborough",42.91521915,-71.71640205,"New Hampshire","carya_ovata",0.25,0,0.125,0,0,0
+"17","Kennebec",44.40918511,-69.76754865,"Maine","carya_ovata",0,0,0,0,0,0
+"18","Middlesex",42.48561893,-71.39231762,"Massachusetts","carya_ovata",0.666666666666667,0,0.0833333333333333,0,0,0.666666666666667
+"19","Nantucket",41.27748275,-70.06440374,"Massachusetts","carya_ovata",3,0,0,0,0,0
+"20","New Haven",41.4110097,-72.93220924,"Connecticut","carya_ovata",0,0,0,0,0,0
+"21","New London",41.49007583,-72.10136656,"Connecticut","carya_ovata",3,0,0,0,0,0
+"22","Norfolk",42.15578347,-71.22284325,"Massachusetts","carya_ovata",0.714285714285714,0,0.285714285714286,0,0,0
+"23","Oxford",44.50063479,-70.75677904,"Maine","carya_ovata",0,0,3,0,0,0
+"24","Providence",41.87209876,-71.58140319,"Rhode Island","carya_ovata",2,0,1,0,0,0
+"25","Rockingham",42.9862675,-71.12965423,"New Hampshire","carya_ovata",0.833333333333333,0,0,0,0,0
+"26","Rutland",43.57979599,-73.03849339,"Vermont","carya_ovata",1.5,0.5,0,0,0.333333333333333,0
+"27","Sagadahoc",44.0308287,-69.88070652,"Maine","carya_ovata",0,0,2,0.25,0,0
+"28","Strafford",43.29843356,-71.03135074,"New Hampshire","carya_ovata",2.33333333333333,0,0.333333333333333,0,0,0
+"29","Suffolk",42.30617406,-71.10355093,"Massachusetts","carya_ovata",2.2,0.2,0.2,0.2,0,0
+"30","Tolland",41.85523858,-72.33658014,"Connecticut","carya_ovata",0.666666666666667,0.666666666666667,0,0,0,0.333333333333333
+"31","Washington",41.47898279,-71.62418496,"Rhode Island","carya_ovata",3,2.5,0,0,0,0
+"32","Windham",41.83086229,-71.98763435,"Connecticut","carya_ovata",0.333333333333333,0,0.666666666666667,0,0,0
+"33","Windham",42.99027958,-72.71386511,"Vermont","carya_ovata",1,0,0,0,0,0
+"34","Windsor",43.57931592,-72.58536362,"Vermont","carya_ovata",1,0,0,0,0.5,0
+"35","Worcester",42.35208868,-71.90798778,"Massachusetts","carya_ovata",0.25,0,0,0,0,0
+"36","York",43.48033291,-70.71549145,"Maine","carya_ovata",0.1,0.1,0.3,0,0.1,0

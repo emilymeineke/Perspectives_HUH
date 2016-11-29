@@ -1,0 +1,30 @@
+"","county","decimalLatitude","decimalLongitude","state","plant_genus_species","mean_lrem","mean_skel","mean_stipp","mean_bmine","mean_smine","mean_SM"
+"1","Addison",44.03020186,-73.14171839,"Vermont","quercus_bicolor",0.5,0.5,0,0,0,0
+"2","Barnstable",41.72741411,-70.29265824,"Massachusetts","quercus_bicolor",0,0,0,0,0,0
+"3","Bennington",43.03516549,-73.09382147,"Vermont","quercus_bicolor",5,0,2,1,0,0
+"4","Berkshire",42.3708893,-73.20736933,"Massachusetts","quercus_bicolor",2,0,0,1.33333333333333,0,0
+"5","Bristol",41.71481073,-71.28386993,"Rhode Island","quercus_bicolor",0.5,0,0,0,0,0
+"6","Bristol",41.80146413,-71.11511193,"Massachusetts","quercus_bicolor",3,0.25,0,0.5,0.75,0
+"8","Essex",42.67251757,-70.95675298,"Massachusetts","quercus_bicolor",2.16666666666667,0.5,0,0,0,0
+"9","Fairfield",41.2735673,-73.38971484,"Connecticut","quercus_bicolor",3,0,0,0,0,0
+"10","Grand Isle",44.79648049,-73.29579597,"Vermont","quercus_bicolor",2,0,0,0,0,0
+"11","Hampden",42.13519179,-72.63148328,"Massachusetts","quercus_bicolor",2.33333333333333,0,0.666666666666667,0.333333333333333,0,2.33333333333333
+"12","Hampshire",42.34002109,-72.66388792,"Massachusetts","quercus_bicolor",3.5,1,1.5,0.5,0,0
+"13","Hartford",41.80663095,-72.73281062,"Connecticut","quercus_bicolor",2.5,0,1,0,0,0
+"14","Hillsborough",42.91521915,-71.71640205,"New Hampshire","quercus_bicolor",1.5,0.25,0.75,0,0,0
+"15","Kent",41.67199981,-71.59283792,"Rhode Island","quercus_bicolor",1,0,0,0,0,0
+"16","Middlesex",42.48561893,-71.39231762,"Massachusetts","quercus_bicolor",1.69230769230769,0.461538461538462,0.384615384615385,0.538461538461538,0.0769230769230769,0
+"17","Nantucket",41.27748275,-70.06440374,"Massachusetts","quercus_bicolor",1,0,0,0,0,0
+"18","New Haven",41.4110097,-72.93220924,"Connecticut","quercus_bicolor",0.5,0,0,0,0,0
+"19","New London",41.49007583,-72.10136656,"Connecticut","quercus_bicolor",3,0,2,0,0,0
+"20","Newport",41.5682519,-71.17096237,"Rhode Island","quercus_bicolor",0,1,1,0,0,0
+"21","Norfolk",42.15578347,-71.22284325,"Massachusetts","quercus_bicolor",2,0.307692307692308,0.0769230769230769,0.153846153846154,0.230769230769231,0
+"22","Plymouth",41.95116826,-70.81229032,"Massachusetts","quercus_bicolor",2.25,0.25,0.75,0.5,0,0
+"23","Providence",41.87209876,-71.58140319,"Rhode Island","quercus_bicolor",2,0.2,0.5,0.9,0,0.6
+"24","Rockingham",42.9862675,-71.12965423,"New Hampshire","quercus_bicolor",2.5,0.75,0,0.75,0,0
+"25","Rutland",43.57979599,-73.03849339,"Vermont","quercus_bicolor",0,0,0,0,0,0
+"26","Suffolk",42.30617406,-71.10355093,"Massachusetts","quercus_bicolor",1.5,0.166666666666667,0,0.166666666666667,0,0
+"27","Washington",41.47898279,-71.62418496,"Rhode Island","quercus_bicolor",1.33333333333333,0.666666666666667,0.333333333333333,0,0,0
+"28","Windham",41.83086229,-71.98763435,"Connecticut","quercus_bicolor",1,0,2,0,0,0
+"29","Windsor",43.57931592,-72.58536362,"Vermont","quercus_bicolor",0,0,0,0,0,0
+"30","Worcester",42.35208868,-71.90798778,"Massachusetts","quercus_bicolor",1.5,1,0.333333333333333,0.333333333333333,0,0.666666666666667

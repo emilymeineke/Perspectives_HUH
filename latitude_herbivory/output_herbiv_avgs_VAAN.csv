@@ -1,0 +1,57 @@
+"","county","decimalLatitude","decimalLongitude","state","plant_genus_species","mean_lrem","mean_skel","mean_stipp","mean_bmine","mean_smine","mean_SM"
+"1","Addison",44.03020186,-73.14171839,"Vermont","vaccinium_angustifolium",0,0,0,0,0,0
+"2","Androscoggin",44.16572498,-70.20664907,"Maine","vaccinium_angustifolium",0,0,0,0,0,0
+"3","Aroostook",46.65881107,-68.59753795,"Maine","vaccinium_angustifolium",0,0.5,0,0,0,0
+"4","Barnstable",41.72741411,-70.29265824,"Massachusetts","vaccinium_angustifolium",2.83333333333333,0.5,0,0,0,0
+"5","Belknap",43.51819011,-71.42336011,"New Hampshire","vaccinium_angustifolium",1.2,0.6,0,0,0,0
+"6","Bennington",43.03516549,-73.09382147,"Vermont","vaccinium_angustifolium",2,0,0,0,0,0
+"7","Berkshire",42.3708893,-73.20736933,"Massachusetts","vaccinium_angustifolium",2.66666666666667,1,0,0,0,0
+"8","Bristol",41.80146413,-71.11511193,"Massachusetts","vaccinium_angustifolium",0.75,0,0,0,0,0
+"9","Caledonia",44.46478495,-72.1023771,"Vermont","vaccinium_angustifolium",2.5,0.5,0,0,0,0
+"10","Carroll",43.87354949,-71.20280644,"New Hampshire","vaccinium_angustifolium",2.66666666666667,1.33333333333333,0.0833333333333333,0,0,0
+"11","Cheshire",42.91987071,-72.25131549,"New Hampshire","vaccinium_angustifolium",2.2,2.2,0.2,0,0,0
+"12","Chittenden",44.46078451,-73.08157094,"Vermont","vaccinium_angustifolium",0.5,0,0,0,0,0
+"13","Coos",44.69113626,-71.30575056,"New Hampshire","vaccinium_angustifolium",0.944444444444444,0.166666666666667,0,0,0,0
+"14","Cumberland",43.85089087,-70.42166764,"Maine","vaccinium_angustifolium",2,0,0,0,0,0
+"15","Dukes",41.38783074,-70.63580856,"Massachusetts","vaccinium_angustifolium",2,0.25,1.25,0,0,0
+"16","Essex",42.67251757,-70.95675298,"Massachusetts","vaccinium_angustifolium",0,0,0,0,0,0
+"17","Essex",44.72685019,-71.73694682,"Vermont","vaccinium_angustifolium",0,0,0,0,0,0
+"18","Fairfield",41.2735673,-73.38971484,"Connecticut","vaccinium_angustifolium",0.333333333333333,0,0,0,0,0
+"19","Franklin",44.97446879,-70.44456105,"Maine","vaccinium_angustifolium",1.2,0.8,0,0,0,0
+"20","Grafton",43.94064865,-71.82037983,"New Hampshire","vaccinium_angustifolium",1.16666666666667,0.333333333333333,0,0,0,0
+"21","Hampden",42.13519179,-72.63148328,"Massachusetts","vaccinium_angustifolium",2,0.333333333333333,0,0,0,0
+"22","Hampshire",42.34002109,-72.66388792,"Massachusetts","vaccinium_angustifolium",2.33333333333333,1,0,0,0,0
+"23","Hancock",44.71937721,-68.35093412,"Maine","vaccinium_angustifolium",3.14285714285714,0.142857142857143,0,0,0,0
+"24","Hartford",41.80663095,-72.73281062,"Connecticut","vaccinium_angustifolium",2.5,0,0,0,0,0
+"25","Hillsborough",42.91521915,-71.71640205,"New Hampshire","vaccinium_angustifolium",0.2,0.6,0,0,0,0
+"26","Kennebec",44.40918511,-69.76754865,"Maine","vaccinium_angustifolium",3,0,0,0,0,0
+"27","Kent",41.67199981,-71.59283792,"Rhode Island","vaccinium_angustifolium",0,0,0,0,0,0
+"28","Knox",44.16599739,-69.23415562,"Maine","vaccinium_angustifolium",2.25,0.25,0,0,0,0
+"29","Lamoille",44.6059487,-72.64174734,"Vermont","vaccinium_angustifolium",0.5,0.25,0,0,0,0
+"30","Litchfield",41.79313353,-73.24593103,"Connecticut","vaccinium_angustifolium",0.333333333333333,0,0,0,0,0
+"31","Merrimack",43.2972412,-71.68020149,"New Hampshire","vaccinium_angustifolium",2,0.6,0.2,0,0,0
+"32","Middlesex",42.48561893,-71.39231762,"Massachusetts","vaccinium_angustifolium",1,0.666666666666667,0,0,0,0
+"33","Nantucket",41.27748275,-70.06440374,"Massachusetts","vaccinium_angustifolium",3.5,0.25,0,0,0,0
+"34","New Haven",41.4110097,-72.93220924,"Connecticut","vaccinium_angustifolium",1,1,0,0,0,0
+"35","New London",41.49007583,-72.10136656,"Connecticut","vaccinium_angustifolium",1,0,0,0,0,0
+"36","Norfolk",42.15578347,-71.22284325,"Massachusetts","vaccinium_angustifolium",0.833333333333333,0.166666666666667,0,0,0,0
+"37","Orange",44.00520414,-72.37708961,"Vermont","vaccinium_angustifolium",5,0,0,0,0,0
+"38","Orleans",44.82874804,-72.24380168,"Vermont","vaccinium_angustifolium",2,0,0,0,0,0
+"39","Oxford",44.50063479,-70.75677904,"Maine","vaccinium_angustifolium",3,0.75,0,0,0,0
+"40","Piscataquis",45.83747651,-69.28450619,"Maine","vaccinium_angustifolium",0.2,0.4,0,0,0,0
+"41","Plymouth",41.95116826,-70.81229032,"Massachusetts","vaccinium_angustifolium",0,0.666666666666667,0,0,0,0
+"42","Providence",41.87209876,-71.58140319,"Rhode Island","vaccinium_angustifolium",1.5,1,0,0,0,0
+"43","Rockingham",42.9862675,-71.12965423,"New Hampshire","vaccinium_angustifolium",0.333333333333333,0.333333333333333,0,0,0,0
+"44","Rutland",43.57979599,-73.03849339,"Vermont","vaccinium_angustifolium",1.71428571428571,0,0,0,0,0
+"45","Sagadahoc",44.0308287,-69.88070652,"Maine","vaccinium_angustifolium",2.66666666666667,0.333333333333333,0,0,0,0
+"46","Somerset",45.51395705,-69.95928163,"Maine","vaccinium_angustifolium",1.75,0,0,0,0,0
+"47","Strafford",43.29843356,-71.03135074,"New Hampshire","vaccinium_angustifolium",1.75,1.125,0,0,0,0
+"48","Suffolk",42.30617406,-71.10355093,"Massachusetts","vaccinium_angustifolium",2,0,0,0,0,0
+"49","Sullivan",43.36082213,-72.22193259,"New Hampshire","vaccinium_angustifolium",2,2,0,0,0,0
+"50","Tolland",41.85523858,-72.33658014,"Connecticut","vaccinium_angustifolium",0,0,0,0,0,0
+"51","Waldo",44.50687764,-69.15467897,"Maine","vaccinium_angustifolium",2.33333333333333,0.666666666666667,0,0,0,0
+"52","Washington",45.04190519,-67.63636625,"Maine","vaccinium_angustifolium",1.83333333333333,0.666666666666667,0,0,0,0
+"53","Windham",42.99027958,-72.71386511,"Vermont","vaccinium_angustifolium",0.5,0,0,0,0,0
+"54","Windsor",43.57931592,-72.58536362,"Vermont","vaccinium_angustifolium",0,0,0,0,0,0
+"55","Worcester",42.35208868,-71.90798778,"Massachusetts","vaccinium_angustifolium",2,2,0,0,0,0
+"56","York",43.48033291,-70.71549145,"Maine","vaccinium_angustifolium",0,0,0,0,0,0
