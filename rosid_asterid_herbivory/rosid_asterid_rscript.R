@@ -3,6 +3,7 @@ library(reshape2)
 library(plyr)
 library(AICcmodavg)
 library(vegan)
+library(RColorBrewer)
 
 RA_dframe <- read.csv("rosid_asterid_data.csv")
 names(RA_dframe)
@@ -20,7 +21,7 @@ RA_dframe$chewing_tot <- RA_dframe$ch_leafremoved+RA_dframe$skel
 #melt into individual rows
 RA_dframe_resh <- melt(RA_dframe, id.vars=c("plant_genus_species", "taxon", "MF", "abscission_num",
                                             "herbarium", "date", "month", "month_cat", "day", "year", "doy", 
-                                            "state", "phenology", "county"))
+                                            "state", "phenology", "county", "plant_genus_species_split", "X1", "X2"))
 names(RA_dframe_resh)
 
 #Exploratory plots
@@ -87,26 +88,32 @@ detach(RA_dframe)
 
 #Making paper figures
 
-#Figure 1: Variation among species
+#Figure 3a: Variation among species
 #cells with chewing damage by taxon & species
 #order dataframe
 x <- subset(RA_dframe, ch_leafremoved != "NA")
 
 italic.text <- element_text(face = "italic", color = "black")
 bplot2 <- ggplot(x, aes(x=reorder(plant_genus_species,ch_leafremoved, mean), y=ch_leafremoved)) 
-bplot2 <- bplot2 + geom_boxplot() + theme_bw() + theme(axis.text.x = element_text(angle=60, hjust=1)) + ylab("Grid cells with herbivory") +
-  xlab("") + theme(legend.position= "none") + scale_x_discrete("", labels = c("baptisia_tinctoria"="Baptisia tinctoria",    "clethra_alnifolia"="Clethra alnifolia",     "cornus_racemosa"="Cornus racemosa",       "epigaea_repens"="Epigaea repens",
+bplot2 <- bplot2 + geom_boxplot() + ylab("Grid cells with herbivory") +
+  xlab("") + scale_x_discrete("", labels = c("baptisia_tinctoria"="Baptisia tinctoria",    "clethra_alnifolia"="Clethra alnifolia",     "cornus_racemosa"="Cornus racemosa",       "epigaea_repens"="Epigaea repens",
                                                                               "galium_triflorum"="Galium triflorum",      "gaylussacia_baccata"="Gaylussacia baccata",  "kalmia_angustifolia"="Kalmia angustifolia",   "lechea_intermedia"="Lechea intermedia",
                                                                               "lespedeza_capitata"="Lespedeza capitata",    "lespedeza_hirta"="Lespedeza hirta",       "ludwigia_palustris"="Ludwigia palustris",    "lycopus_americanus"="Lycopus americanus",   
                                                                               "lysimachia_terrestris"="Lysimachia terrestris", "mentha_arvensis"="Mentha arvensis",       "polygala_sanguinea"="Polygala sanguinea",    "triadenum_virginicum"="Triadenum virginicum",
                                                                               "vaccinium_macrocarpon"="Vaccinium macrocarpon", "viola_blanda"="Viola blanda", "viola_cucullata"="Viola cucullata",       "vitis_labrusca"="Vitis labrusca")) +
-  theme(axis.text.x = italic.text)
+  theme(axis.text.x = italic.text) + theme(legend.position= "none") +
+  theme_bw() + theme(axis.text.x = element_text(angle = 60, hjust = 1),
+                     axis.title.y = element_text(size=12), 
+                   panel.background = element_blank(), 
+                   panel.grid.major = element_blank(),  #remove major-grid labels
+                   panel.grid.minor = element_blank()) 
 bplot2
+ggsave(file="/Users/emilymeineke/Documents/Perspectives_HUH/rosid_asterid_herbivory/Herbivory_POCfigs/Fig3a_var_btwn_spp.jpeg", dpi=300)
+ggsave(file="/Users/emilymeineke/Documents/Perspectives_HUH/rosid_asterid_herbivory/Herbivory_POCfigs/Fig3a_var_btwn_spp.tiff", dpi=300)
 
 
 
-
-#Figure 2: Zero inflation
+#Figure 3b: Zero inflation
 #What are the most prevalent 5 types of herbivory? 
 RA_dframe_resh$binary <- ifelse(RA_dframe_resh$value>0, 1, 0)
 topfive <- ddply(RA_dframe_resh, ~variable, summarize, mean_specdamaged = mean(binary, na.rm=T))
@@ -128,14 +135,24 @@ Fig2
 topfive_RA_dframe_resh <- subset(topfive_RA_dframe_resh, variable != "sooty.mould")
 cbPalette <- c("ch_leafremoved"="#E69F00", "skel"="#56B4E9", "stippling"= "#0072B2", "leaf.galls" = "#F0E442", "leafmines_tot" = "#000000")
 hist_cut <- ggplot(topfive_RA_dframe_resh, aes(x=value, fill=variable)) +xlab("Grid cells with herbivory") + ylab("Specimens")
-hist_cut <- hist_cut + geom_bar(position="dodge") + theme_bw() + scale_fill_manual(values=cbPalette, 
+hist_cut <- hist_cut + geom_bar(position="dodge") + scale_fill_manual(values=cbPalette, 
                                                                         name="Damage Type",
                                                                         breaks=c("ch_leafremoved", "skel", "stippling", "leaf.galls", "leafmines_tot"),
-                                                                        labels=c("chewing (leaf area removed)", "skeletonization", "stippling", "leaf galls", "leaf mines"))
+                                                                        labels=c("chewing (leaf area removed)", "skeletonization", "stippling", "leaf galls", "leaf mines")) +
+  theme_bw() + theme(axis.title.x = element_text(size=12), 
+                     axis.title.y = element_text(size=12), 
+                     panel.background = element_blank(), 
+                     panel.grid.major = element_blank(),  #remove major-grid labels
+                     panel.grid.minor = element_blank(),
+                     legend.title = element_text(size=12),
+                     legend.key = element_blank()) 
 hist_cut
+ggsave(file="/Users/emilymeineke/Documents/Perspectives_HUH/rosid_asterid_herbivory/Herbivory_POCfigs/Fig3b_zeroinflation.jpeg", dpi=300)
+ggsave(file="/Users/emilymeineke/Documents/Perspectives_HUH/rosid_asterid_herbivory/Herbivory_POCfigs/Fig3b_zeroinflation.jpeg.tiff", dpi=300)
 
 
-#Figure 3: Progression of herbivory annually
+
+#Progression of herbivory annually
 
 #Abundance of herbivory
 #Continuous, garbage
@@ -237,7 +254,6 @@ mean_damage_abund <- ddply(RA_dframe, ~plant_genus_species, summarize, mean_chew
 attach(mean_damage_abund)
 mean_damage_abund_top <- mean_damage_abund[order(mean_chewing),]
 
-
 #Cat
 #Format data
 RA_dframe$totalherbiv <- RA_dframe$chewing_tot+RA_dframe$stippling+RA_dframe$leafmines_tot+RA_dframe$sooty.mould+RA_dframe$leaf.galls
@@ -278,13 +294,22 @@ RA_dframe_fig2_noNA <- subset(RA_dframe_resh2_fig2, value != "NA")
 RA_dframe_fig2_noNA$prop <- RA_dframe_fig2_noNA$value/4908
 RA_dframe_fig2_noNA <- subset(RA_dframe_fig2_noNA, month_cat != "March" & month_cat != "December" & variable != "binary_SM")
 
+#Progression of herbivory throughout the season, potential figure
 cbPalette <- c("binary_noherbiv"= "#009E73", "binary_chew"="#E69F00", "binary_skel"="#56B4E9", "binary_stipp"= "#0072B2", "binary_lgalls" = "#F0E442", "binary_lmines" = "#000000")
-cat <- ggplot(RA_dframe_fig2_noNA, aes(x=reorder(month_cat,doy), y=prop)) + theme_bw() + xlab("") + ylab("Proportion of specimens")
+cat <- ggplot(RA_dframe_fig2_noNA, aes(x=reorder(month_cat,doy), y=prop))+ xlab("") + ylab("Proportion of specimens")
 cat <- cat + geom_bar(aes(fill = variable), position = "fill", stat="identity") + scale_fill_manual(values=cbPalette, 
                                                                                                     name="Damage Type",
                                                                                                     breaks=c("binary_chew", "binary_skel", "binary_stipp", "binary_lgalls", "binary_lmines", "binary_noherbiv"),
-                                                                                                    labels=c("chewing (leaf area removed)", "skeletonization", "stippling", "leaf galls", "leaf mines", "no herbivory"))
+                                                                                                    labels=c("chewing (leaf area removed)", "skeletonization", "stippling", "leaf galls", "leaf mines", "no herbivory")) + 
+  theme_bw() + theme(axis.title.x = element_text(size=12), # remove x-axis labels
+        axis.title.y = element_text(size=12), # remove y-axis labels
+        panel.background = element_blank(), 
+        panel.grid.major = element_blank(),  #remove major-grid labels
+        panel.grid.minor = element_blank()) +
+  theme(legend.key = element_blank())
 cat
+ggsave(file="/Users/emilymeineke/Documents/Perspectives_HUH/rosid_asterid_herbivory/Herbivory_POCfigs/seasonal_progression_herbiv.jpeg", dpi=300)
+ggsave(file="/Users/emilymeineke/Documents/Perspectives_HUH/rosid_asterid_herbivory/Herbivory_POCfigs/seasonal_progression_herbiv.tiff", dpi=300)
 
 #x=reorder(plant_genus_species,ch_leafremoved, mean)
 
@@ -402,11 +427,11 @@ Cred_sp<-subset(C, pvals<0.05)
 Cred_sp <- cbind(Cred_sp, Species = rownames(Cred_sp))
 colvec <- c("black","darkgrey","red","orange")
 
-ggplot() + 
-  #geom_polygon(data=hull.data,aes(x=MDS1,y=MDS2,fill=grp,group=grp),alpha=0.30, show.legend=FALSE) + # add the convex hulls
-  scale_fill_manual(values=c("lespedeza_capitata" = "black", "lespedeza_hirta" = "darkgrey", "viola_blanda" = "red", "viola_cucullata"="orange")) +
+ggplot() + scale_colour_manual(values=c("lespedeza_capitata" = "black", "lespedeza_hirta" = "darkgrey", "viola_blanda" = "red", "viola_cucullata"="orange"),
+                    breaks=c("lespedeza_capitata", "lespedeza_hirta", "viola_blanda", "viola_cucullata"),
+                    labels=c("Lespedeza capitata", "Lespedeza hirta", "Viola blanda", "Viola cucullata")) +
   geom_point(data=data.scores,aes(x=MDS1,y=MDS2, colour=grp),size=3) + # add the point markers
-  scale_colour_manual(values=c("lespedeza_capitata" = "black", "lespedeza_hirta" = "darkgrey", "viola_blanda" = "red", "viola_cucullata"="orange"), name="") +
+ # scale_colour_manual(values=c("lespedeza_capitata" = "black", "lespedeza_hirta" = "darkgrey", "viola_blanda" = "red", "viola_cucullata"="orange"), name="") +
   coord_equal() +
   theme_bw() + 
   theme(axis.text.x = element_blank(),  # remove x-axis text
@@ -417,12 +442,12 @@ ggplot() +
         panel.background = element_blank(), 
         panel.grid.major = element_blank(),  #remove major-grid labels
         panel.grid.minor = element_blank(),  #remove minor-grid labels
-        plot.background = element_blank()) +
-  theme(legend.title = element_text(size=10)) +
+        plot.background = element_blank(),
+        legend.text = element_text(face = "italic")) +
+  theme(legend.title = element_blank()) +
   theme(legend.text = element_text(size =10)) 
-#+
-#scale_shape_manual(values = c(17, 2), name="Spray treatment", breaks=c("n", "y"), labels=c("not sprayed", "sprayed"))
-#ggsave(file="/Users/emilymeineke/Desktop/Collaborations/Annas project/Annas data 10.13.2015/Analyses for ESA/Figures/Spiderbraycurtis.mds2013_withspecies.tiff", width=18, height=18, units="cm", dpi=300)
+ggsave(file="/Users/emilymeineke/Documents/Perspectives_HUH/rosid_asterid_herbivory/Herbivory_POCfigs/Fig3c_NMDS.jpeg", dpi=300)
+ggsave(file="/Users/emilymeineke/Documents/Perspectives_HUH/rosid_asterid_herbivory/Herbivory_POCfigs/Fig3c_NMDS.tiff", dpi=300)
 
 
 
@@ -472,6 +497,50 @@ fad
 fmod<-with(map,betadisper(fotu.bray,plant_genus_species))
 anova(fmod)
 TukeyHSD(fmod)
+
+#create joined map and nmds score dataframe
+braycurtis.mds_ord <- braycurtis.mds$points
+dim(braycurtis.mds_ord)
+braycurtis.mds_ord <- braycurtis.mds_ord[1:527,]
+joined_ord_map <- merge(braycurtis.mds_ord, map, by= "row.names")
+rownames(joined_ord_map) <- joined_ord_map[,1]
+joined_ord_map <- joined_ord_map[,-1]
+names(joined_ord_map)
+
+#Supplementary figure with all species 
+n <- 20
+qual_col_pals = brewer.pal.info[brewer.pal.info$category == 'qual',]
+cbPalette = unlist(mapply(brewer.pal, qual_col_pals$maxcolors, rownames(qual_col_pals)))
+
+ggplot() + geom_point(data=joined_ord_map,aes(x=MDS1,y=MDS2, colour=plant_genus_species),size=3) +
+  scale_colour_manual(values=cbPalette, 
+                      name="",
+                      breaks=c("baptisia_tinctoria", "clethra_alnifolia", "cornus_racemosa", "epigaea_repens",
+                               "galium_triflorum", "gaylussacia_baccata", "kalmia_angustifolia", "lechea_intermedia",
+                               "lespedeza_capitata", "lespedeza_hirta", "ludwigia_palustris", "lycopus_americanus",   
+                               "lysimachia_terrestris", "mentha_arvensis", "polygala_sanguinea", "triadenum_virginicum",
+                               "vaccinium_macrocarpon", "viola_blanda", "viola_cucullata", "vitis_labrusca"),
+                      labels=c("Baptisia tinctoria", "Clethra alnifolia", "Cornus racemosa", "Epigaea repens", 
+                               "Galium triflorum", "Gaylussacia baccata","Kalmia angustifolia", "Lechea intermedia", 
+                               "Lespedeza capitata", "Lespedeza hirta",  "Ludwigia palustris", "Lycopus americanus",
+                               "Lysimachia terrestris", "Mentha arvensis", "Polygala sanguinea", "Triadenum virginicum",
+                               "Vaccinium macrocarpon", "Viola blanda", "Viola cucullata", "Vitis labrusca")) +
+                        coord_equal() + theme_bw() + theme(axis.text.x = element_blank(),  # remove x-axis text
+                                                           axis.text.y = element_blank(), # remove y-axis text
+                                                           axis.ticks = element_blank(),  # remove axis ticks
+                                                           axis.title.x = element_text(size=12), # remove x-axis labels
+                                                           axis.title.y = element_text(size=12), # remove y-axis labels
+                                                           panel.background = element_blank(), 
+                                                           panel.grid.major = element_blank(),  #remove major-grid labels
+                                                           panel.grid.minor = element_blank(),  #remove minor-grid labels
+                                                           plot.background = element_blank(),
+                                                           legend.text = element_text(face = "italic"),
+                                                           legend.title = element_blank(),
+                                                           legend.text = element_text(size =10))
+ggsave(file="/Users/emilymeineke/Documents/Perspectives_HUH/rosid_asterid_herbivory/Herbivory_POCfigs/Supp_NMDS_allspecies.jpeg", dpi=300)
+ggsave(file="/Users/emilymeineke/Documents/Perspectives_HUH/rosid_asterid_herbivory/Herbivory_POCfigs/Supp_NMDS_allspecies.tiff", dpi=300)
+
+
 
 #Export data for phylogenetic tree
 braycurtis.mds_ord <- braycurtis.mds$points
@@ -541,11 +610,34 @@ anova(model)
 #What species have the most diverse damage? Can we just plot the progression of those throughout the year? 
  
 
-#Output for overlaying on phylogeny
-#Average damage diversity
+#Comparison w Turcotte paper
+#Get averages for comparing w Turcotte paper
+RA_dframe_JulthruAug <- subset(RA_dframe, month_cat== "July"|month_cat=="August"|month_cat=="September")
+mean_dam_July_Aug_Sept <- ddply(RA_dframe_JulthruAug, ~plant_genus_species, summarize, mean_chewing = mean(ch_leafremoved, na.rm=T))
+
+#Input data
+herb_corr <- read.csv("Herb_correlation.csv", header=TRUE)
+names(herb_corr)
+
+lm_hcrr <- lm(Herb_JulAugSept~Annherbiv_Turcotte, data=herb_corr)
+summary(lm_hcrr)
 
 
-
-
+#Fig 3d
+turc <- ggplot(herb_corr, aes(x=Annherbiv_Turcotte, y=Herb_JulAugSept)) + geom_point(size=3) + geom_smooth(method="lm", se=FALSE, colour="black") +
+  theme_bw() + xlab("Annual herbivory rate (%)") + ylab("Grid cells with chewing herbivory") + theme(axis.title.x = element_text(size=12), # remove x-axis labels
+                     axis.title.y = element_text(size=14),
+                     axis.title.x = element_text(size=14),
+                     axis.text.x = element_text(size=12),
+                     axis.text.y = element_text(size=12),
+                     panel.background = element_blank(), 
+                     panel.grid.major = element_blank(), 
+                     panel.grid.minor = element_blank(),
+                     legend.text = element_text(face = "italic"),
+                     legend.key = element_blank()) 
+turc
+#+ xlim(1,9) + ylim(0,2.5)
+ggsave(file="/Users/emilymeineke/Documents/Perspectives_HUH/rosid_asterid_herbivory/Herbivory_POCfigs/Fig3d_turcotte.jpeg", height=6, dpi=300)
+ggsave(file="/Users/emilymeineke/Documents/Perspectives_HUH/rosid_asterid_herbivory/Herbivory_POCfigs/Fig3d_turcotte.tiff", height=6, dpi=300)
 
 
