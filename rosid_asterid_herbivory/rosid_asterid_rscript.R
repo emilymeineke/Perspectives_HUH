@@ -4,6 +4,10 @@ library(plyr)
 library(AICcmodavg)
 library(vegan)
 library(RColorBrewer)
+library(nlme)
+library(lme4)
+library(Rcpp)
+library(aod)
 
 RA_dframe <- read.csv("rosid_asterid_data.csv")
 names(RA_dframe)
@@ -88,7 +92,7 @@ detach(RA_dframe)
 
 #Making paper figures
 
-#Figure 3a: Variation among species
+#Variation among species
 #cells with chewing damage by taxon & species
 #order dataframe
 x <- subset(RA_dframe, ch_leafremoved != "NA")
@@ -108,8 +112,8 @@ bplot2 <- bplot2 + geom_boxplot() + ylab("Grid cells with herbivory") +
                    panel.grid.major = element_blank(),  #remove major-grid labels
                    panel.grid.minor = element_blank()) 
 bplot2
-ggsave(file="/Users/emilymeineke/Documents/Perspectives_HUH/rosid_asterid_herbivory/Herbivory_POCfigs/Fig3a_var_btwn_spp.jpeg", dpi=300)
-ggsave(file="/Users/emilymeineke/Documents/Perspectives_HUH/rosid_asterid_herbivory/Herbivory_POCfigs/Fig3a_var_btwn_spp.tiff", dpi=300)
+#ggsave(file="/Users/emilymeineke/Documents/Perspectives_HUH/rosid_asterid_herbivory/Herbivory_POCfigs/Fig3a_var_btwn_spp.jpeg", dpi=300)
+#ggsave(file="/Users/emilymeineke/Documents/Perspectives_HUH/rosid_asterid_herbivory/Herbivory_POCfigs/Fig3a_var_btwn_spp.tiff", dpi=300)
 
 
 
@@ -147,8 +151,8 @@ hist_cut <- hist_cut + geom_bar(position="dodge") + scale_fill_manual(values=cbP
                      legend.title = element_text(size=12),
                      legend.key = element_blank()) 
 hist_cut
-ggsave(file="/Users/emilymeineke/Documents/Perspectives_HUH/rosid_asterid_herbivory/Herbivory_POCfigs/Fig3b_zeroinflation.jpeg", dpi=300)
-ggsave(file="/Users/emilymeineke/Documents/Perspectives_HUH/rosid_asterid_herbivory/Herbivory_POCfigs/Fig3b_zeroinflation.jpeg.tiff", dpi=300)
+ggsave(file="/Users/emilymeineke/Documents/Perspectives_HUH/rosid_asterid_herbivory/Herbivory_POCfigs/Fig3c_zeroinflation.jpeg", dpi=300)
+ggsave(file="/Users/emilymeineke/Documents/Perspectives_HUH/rosid_asterid_herbivory/Herbivory_POCfigs/Fig3c_zeroinflation.jpeg.tiff", dpi=300)
 
 
 
@@ -308,8 +312,8 @@ cat <- cat + geom_bar(aes(fill = variable), position = "fill", stat="identity") 
         panel.grid.minor = element_blank()) +
   theme(legend.key = element_blank())
 cat
-ggsave(file="/Users/emilymeineke/Documents/Perspectives_HUH/rosid_asterid_herbivory/Herbivory_POCfigs/seasonal_progression_herbiv.jpeg", dpi=300)
-ggsave(file="/Users/emilymeineke/Documents/Perspectives_HUH/rosid_asterid_herbivory/Herbivory_POCfigs/seasonal_progression_herbiv.tiff", dpi=300)
+ggsave(file="/Users/emilymeineke/Documents/Perspectives_HUH/rosid_asterid_herbivory/Herbivory_POCfigs/Fig3d_seasonal_progression_herbiv.jpeg", dpi=300)
+ggsave(file="/Users/emilymeineke/Documents/Perspectives_HUH/rosid_asterid_herbivory/Herbivory_POCfigs/Fig3d_seasonal_progression_herbiv.tiff", dpi=300)
 
 #x=reorder(plant_genus_species,ch_leafremoved, mean)
 
@@ -322,6 +326,11 @@ model <- glmer(chew_prop~log(doy+1)+(1|plant_genus_species), weights=totalboxes,
                na.action=na.omit, data=RA_dframe_noNAchew, control = glmerControl(optimizer = "bobyqa"),
                nAGQ = 10)
 summary(model)
+
+model2 <- glm(chew_prop~plant_genus_species, weights=totalboxes, family = binomial(logit), 
+                na.action=na.omit, data=RA_dframe_noNAchew)
+summary(model2)
+wald.test(b = coef(model2), Sigma = vcov(model2), Terms = 1:19)
 
 binary_chew <- list()
 binary_chew[[1]] <- glm(chew_prop~doy*plant_genus_species+year, weights=totalboxes, family = binomial(logit), 
@@ -378,6 +387,13 @@ map <- RA_dframe_sub_justfour[c("matID", "plant_genus_species", "taxon", "MF", "
 #nmds
 otu.bray <- vegdist(mat,method="bray")
 braycurtis.mds <- metaMDS(otu.bray, k=2)
+
+#Hypothesis testing
+fad<-adonis(otu.bray~plant_genus_species, data=map, permutations=999)
+fad
+fmod<-with(map,betadisper(otu.bray,plant_genus_species))
+anova(fmod)
+TukeyHSD(fmod)
 
 #base plot
 with(map, levels(plant_genus_species))
@@ -446,8 +462,8 @@ ggplot() + scale_colour_manual(values=c("lespedeza_capitata" = "black", "lespede
         legend.text = element_text(face = "italic")) +
   theme(legend.title = element_blank()) +
   theme(legend.text = element_text(size =10)) 
-ggsave(file="/Users/emilymeineke/Documents/Perspectives_HUH/rosid_asterid_herbivory/Herbivory_POCfigs/Fig3c_NMDS.jpeg", dpi=300)
-ggsave(file="/Users/emilymeineke/Documents/Perspectives_HUH/rosid_asterid_herbivory/Herbivory_POCfigs/Fig3c_NMDS.tiff", dpi=300)
+ggsave(file="/Users/emilymeineke/Documents/Perspectives_HUH/rosid_asterid_herbivory/Herbivory_POCfigs/Fig3b_NMDS.jpeg", dpi=300)
+ggsave(file="/Users/emilymeineke/Documents/Perspectives_HUH/rosid_asterid_herbivory/Herbivory_POCfigs/Fig3b_NMDS.tiff", dpi=300)
 
 
 

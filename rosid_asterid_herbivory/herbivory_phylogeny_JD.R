@@ -106,7 +106,7 @@ contMap(phy.signal.data$phy, phy.signal.data$data)
 
 
 
-#Chewing damage
+#Chewing damage, FOR PAPER
 chewing.dat<-sp.chewing[,2]
 names(chewing.dat)<-row.names(sp.chewing)
 
@@ -116,8 +116,8 @@ phy.signal.data<-match.phylo.data(tree, chewing.dat)
 library(picante)
 phylosignal(phy.signal.data$data, phy.signal.data$phy, reps = 999)
 
-# K PIC.variance.obs PIC.variance.rnd.mean PIC.variance.P PIC.variance.Z
-# 1 0.3965634       0.01561714            0.03275709          0.119       -1.14018
+#K PIC.variance.obs PIC.variance.rnd.mean PIC.variance.P PIC.variance.Z
+#1 0.3965634       0.01561714            0.03296785          0.094      -1.172986
 
 
 ##
